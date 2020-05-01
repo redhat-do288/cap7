@@ -1,2 +1,14 @@
 https://github.com/marcorosati/trigger-builds.git
 172.30.1.1:5000/openshift/php -->image
+
+TASK
+create project manage-deploy
+create app scale, php image stream, https://github.com/redhat-do288/php-scale.git
+create route scale.hostname
+test scale.hostname
+aumentare a 2 il numero di istanza e verificare round robbin
+modificare nel file index.html la versione da 1 a 2
+avviare una nuova build
+test scale.hostaname
+rollback
+test
