@@ -1,8 +1,3 @@
-wildfly template
-https://github.com/openshift/openshift-jee-sample.git
-http://openshift-jee-sample-myproject.127.0.0.1.nip.io/snoop.jsp per readiness 
-
-
 SETUP
 Il punto 1 è opzionale si può usare direttamente il file quip-template.json nel repository cap7 cartella esercizio3
 1.
