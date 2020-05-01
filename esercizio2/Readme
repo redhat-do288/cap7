@@ -1,0 +1,23 @@
+SETUP
+Deployare app che restituisce uno uno script per inizializzare il database:
+	oc new-app --name hello --build-env npm_config_registry=https://registry.npmjs.org https://github.com/redhat-do288/download-script-app.git
+NB il pod hook non riesce a connettersi al router quindi nella curl dello script usare l'ip del service http://172.30.201.79:8080
+NB lo script restituito dall'app hello è semplificato (non ha controlli sugli errori di creazione tabella per esempio)
+
+TASK
+new project strategy
+deploy app
+	name mysql
+	MYSQL_USER=test
+	MYSQL_PASSWORD=redhat
+	MYSQL_DATABASE=testdb
+	image stream mysql
+	cambiare deploy strategy in Recreate (evitando il restart)
+	aggiungere un post life-cycle hook che effettua il download da IP:PORT (app hello)
+	avviare il nuovo deploy e verificare l'errore del post hook (se non fallisce settare la variabile d'ambiente HOOK_SLEEP nel container del hook)
+	modificare il valore di HOOK_SLEEP e avviare nuovamente il deploy
+	verificare presenza dati
+	
+
+
+

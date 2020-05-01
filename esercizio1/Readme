@@ -1,0 +1,28 @@
+SETUP
+TASK
+	creare progetto probes
+	deploy app
+		name probes
+		repo https://github.com/redhat-do288/probes.git
+		npm_config_registry=https://registry.npmjs.org
+		route probes.hostname
+	test 
+		curl probes.hostname
+		curl probes.hostname/healthz
+		curl curl probes.hostname/ready (per i primi 30 secondi restituisce 503, successivamente restituisce 200 ok)
+	attivare readiness probe
+		type http get
+		path /ready
+		port 8080
+		initial Delay 2
+		timeout 2
+	attivare liveness probe
+		type http get
+		path /healthz
+		port 8080
+		initial delay 2
+		timeout 2
+	analizzare log ed eventi
+	simulare failure liveness probe curl probes.hostname/flip?op=kill
+	verifica log e restart
+        

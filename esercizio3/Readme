@@ -1,0 +1,27 @@
+wildfly template
+https://github.com/openshift/openshift-jee-sample.git
+http://openshift-jee-sample-myproject.127.0.0.1.nip.io/snoop.jsp per readiness 
+
+
+SETUP
+Il punto 1 è opzionale si può usare direttamente il file quip-template.json nel repository cap7 cartella esercizio3
+1.
+-Creare template per il deploy di https://github.com/redhat-do288/quip.git, con wildfly (tramite oc new-app e oc export)
+-Aggiungere readiness probe /quip/raedy
+-Aggiungere route quip
+-Esportare template in quip-template.json
+2. git reset c99ae6040681b470cdbe666bf5c02c834b5c3bbb
+3. gti push -f
+	
+
+TASK
+-creare applicazione usando quip-template.json
+-il deploy fallisce->fix
+-test curl quip.hostname/quip/
+-modificare "Veni, vidi, vici...\n" in "I came, I saw, I conquered...\n" e aggiornare repository
+-test curl quip.hostname/quip/
+-rollback
+-test curl quip.hostname/quip/ e verificare versione precedente
+
+
+

@@ -1,0 +1,134 @@
+apiVersion: v1
+kind: Template
+metadata:
+  
+  name: quip-template
+objects:
+- apiVersion: v1
+  kind: ImageStream
+  metadata:
+    generation: 1
+    labels:
+      app: quip
+    name: quip
+  spec:
+    lookupPolicy:
+      local: false
+- apiVersion: v1
+  kind: BuildConfig
+  metadata:
+    labels:
+      app: quip
+    name: quip
+  spec:
+    failedBuildsHistoryLimit: 5
+    nodeSelector: null
+    output:
+      to:
+        kind: ImageStreamTag
+        name: quip:latest
+    postCommit: {}
+    resources: {}
+    runPolicy: Serial
+    source:
+      git:
+        uri: https://github.com/redhat-do288/quip.git
+      type: Git
+    strategy:
+      sourceStrategy:
+        from:
+          kind: ImageStreamTag
+          name: wildfly:10.1
+          namespace: openshift
+      type: Source
+    successfulBuildsHistoryLimit: 5
+    triggers:
+    - github:
+        secret: VJdHJQb5O2E8lhr8cjzN
+      type: GitHub
+    - generic:
+        secret: YQY71BS1chUIspE0puDc
+      type: Generic
+    - type: ConfigChange
+    - imageChange: {}
+      type: ImageChange
+- apiVersion: v1
+  kind: DeploymentConfig
+  metadata:
+    generation: 1
+    labels:
+      app: quip
+    name: quip
+  spec:
+    replicas: 1
+    revisionHistoryLimit: 10
+    selector:
+      app: quip
+      deploymentconfig: quip
+    strategy:
+      activeDeadlineSeconds: 21600
+      resources: {}
+      rollingParams:
+        intervalSeconds: 1
+        maxSurge: 25%
+        maxUnavailable: 25%
+        timeoutSeconds: 600
+        updatePeriodSeconds: 1
+      type: Rolling
+    template:
+      metadata:
+        labels:
+          app: quip
+          deploymentconfig: quip
+      spec:
+        containers:
+        - imagePullPolicy: Always
+          name: quip
+          ports:
+          - containerPort: 8080
+            protocol: TCP
+          readinessProbe:
+            failureThreshold: 3
+            httpGet:
+              path: /raedy
+              port: 8080
+              scheme: HTTP
+            periodSeconds: 10
+            successThreshold: 1
+            timeoutSeconds: 1
+          resources: {}
+          terminationMessagePath: /dev/termination-log
+          terminationMessagePolicy: File
+        dnsPolicy: ClusterFirst
+        restartPolicy: Always
+        schedulerName: default-scheduler
+        securityContext: {}
+        terminationGracePeriodSeconds: 30
+    test: false
+    triggers:
+    - type: ConfigChange
+    - imageChangeParams:
+        automatic: true
+        containerNames:
+        - quip
+        from:
+          kind: ImageStreamTag
+          name: quip:latest
+      type: ImageChange
+- apiVersion: v1
+  kind: Service
+  metadata:
+    labels:
+      app: quip
+    name: quip
+  spec:
+    ports:
+    - name: 8080-tcp
+      port: 8080
+      protocol: TCP
+      targetPort: 8080
+    selector:
+      app: quip
+      deploymentconfig: quip
+    sessionAffinity: None
+    type: ClusterIP
